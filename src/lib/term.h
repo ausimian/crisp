@@ -28,7 +28,7 @@ typedef uintptr_t term_t;
 #define TT_CONS  ((term_t)3)
 
 #define TT_MASK       ((term_t)3)
-#define TT_MASK_WIDTH 3
+#define TT_MASK_WIDTH 2
 
 static inline 
 uintptr_t ttype(term_t t) { return t & TT_MASK; }
@@ -76,5 +76,8 @@ term_t car(term_t t) { return cons_from_term(t)->car; }
 
 static inline 
 term_t cdr(term_t t) { return cons_from_term(t)->cdr; }
+
+static inline
+term_t term_from_cons(cons_t *p) { return ((term_t)p) | TT_CONS; }
 
 term_t cons(term_t car, term_t cdr);

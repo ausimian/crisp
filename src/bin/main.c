@@ -1,8 +1,16 @@
 #include <inttypes.h>
 #include <stdio.h>
-#include <lib/term.h> 
+#include <string.h>
+#include <lib/symtab.h>
+#include <lib/read.h> 
+
 
 int main() {
-	term_t t = term_from_int(23);
-	printf("Hello, world %" PRIiPTR ".\n", int_from_term(t));
+	static char expr[] = "(+ 1 2)";
+	FILE* f;
+
+	mksym("+");
+	f = fmemopen(expr, strlen(expr), "r");
+	read(f);
+	fclose(f);
 }
