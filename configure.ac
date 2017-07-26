@@ -10,6 +10,13 @@ AM_INIT_AUTOMAKE([subdir-objects -Wall -Werror])
 # Checks for programs.
 AC_PROG_CC_C99
 AC_PROG_CPP
+AC_PROG_RANLIB
+AM_PROG_AR
+AM_SILENT_RULES([yes])
+
+
+# Us the C language and compiler for the following checks
+AC_LANG([C])
 
 # Checks for libraries.
 
