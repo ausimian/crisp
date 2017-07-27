@@ -22,24 +22,34 @@
 
 typedef uintptr_t term_t;
 
+/*
+ * Types held in a single term - native integers, symbols, and pointers to 
+ * cons cells and heap types. A non-nil heap type is a lambda.
+ */
+
 #define TT_HEAP  ((term_t)0)
 #define TT_INT   ((term_t)1)
 #define TT_SYM   ((term_t)2)
 #define TT_CONS  ((term_t)3)
 
-#define TT_MASK       ((term_t)3)
+#define TT_MASK  ((term_t)3)
 #define TT_MASK_WIDTH 2
+
 
 static inline 
 uintptr_t ttype(term_t t) { return t & TT_MASK; }
 
-// NIL
+/*
+ * NIL
+ */
 #define TT_NIL  ((term_t)0)
 static inline 
 bool nil_p(term_t t) { return t == TT_NIL; }
 
 
-// Native integers
+/*
+ * Native integers
+ */
 static inline 
 bool int_p(term_t t) { return ttype(t) == TT_INT; }
 
@@ -49,7 +59,9 @@ intptr_t int_from_term(term_t t) { return ((intptr_t)(t >> TT_MASK_WIDTH)); }
 term_t term_from_int(intptr_t i);
 
 
-// Symbols
+/*
+ * Symbols
+ */
 static inline 
 bool sym_p(term_t t) { return ttype(t) == TT_SYM; }
 
@@ -58,8 +70,9 @@ const char* symbol_from_term(term_t t) { return ((const char*)(t & ~TT_MASK)); }
 
 term_t term_from_symbol(const char* sym);
 
-
-// Cons cells
+/*
+ * Cons cells
+ */
 static inline 
 bool cons_p(term_t t) { return ttype(t) == TT_CONS; }
 
@@ -72,12 +85,39 @@ static inline
 cons_t* cons_from_term(term_t t) { return (cons_t*)(t & ~TT_MASK); }
 
 static inline 
-term_t car(term_t t) { return cons_from_term(t)->car; }
+term_t car(term_t t) { return nil_p(t) ? t : cons_from_term(t)->car; }
 
 static inline 
-term_t cdr(term_t t) { return cons_from_term(t)->cdr; }
+term_t cdr(term_t t) { return nil_p(t) ? t : cons_from_term(t)->cdr; }
+
+static inline
+term_t cdar(term_t t) { return car(cdr(t)); }
+
+static inline
+term_t cddar(term_t t) { return car(cdr(cdr(t))); }
 
 static inline
 term_t term_from_cons(cons_t *p) { return ((term_t)p) | TT_CONS; }
 
 term_t cons(term_t car, term_t cdr);
+
+
+/*
+ * Lambdas
+ */
+static inline
+bool lambda_p(term_t t) { return ttype(t) == TT_HEAP && t; }
+
+typedef struct lambda_t {
+	term_t (*invoke)(struct lambda_t*, term_t);
+	term_t env;
+	term_t bindings;
+	term_t body;
+} lambda_t;
+
+static inline 
+lambda_t* lambda_from_term(term_t t) { return (lambda_t*)t; }
+
+static inline
+term_t term_from_lambda(lambda_t* l) { return (term_t)l; }
+

@@ -30,4 +30,11 @@ symbol_t mksym(const char* name) {
   return *sym;
 }
 
+void syminit() {}
+
+void symterm() {
+	for (size_t i = 0; i < csyms; ++i)
+		free(syms[i]);
+	free(syms);
+}
 

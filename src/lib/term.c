@@ -3,8 +3,7 @@
 #include "gc.h"
 
 term_t term_from_int(intptr_t i) {
-	(void)i;
-	return TT_NIL;
+	return (i << TT_MASK_WIDTH) | TT_INT;
 }
 
 term_t term_from_symbol(const char* name) {
@@ -12,7 +11,7 @@ term_t term_from_symbol(const char* name) {
 }
 
 term_t cons(term_t car, term_t cdr) {
-	cons_t *p = mkcons();
+	cons_t *p = (cons_t*)alloc(sizeof(cons_t) / sizeof(term_t));
 	p->car = car;
 	p->cdr = cdr;
 	return term_from_cons(p);

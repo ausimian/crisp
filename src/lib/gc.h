@@ -1,9 +1,10 @@
 #pragma once
 
+#include <stdlib.h>
 #include "term.h"
 
 void gc();
 
-cons_t* mkcons();
+term_t* alloc(size_t n_terms);
 
 
