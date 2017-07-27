@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "init.h"
 #include "env.h"
 #include "gc.h"
@@ -15,8 +16,12 @@ static inline term_t mkbuiltin(const char* sym) {
 
 static term_t add(lambda_t* ignored, term_t args) {
 	(void)ignored;
-	(void)args;
-	return TT_NIL;
+	int sum = 0;
+	while (!nil_p(args)) {
+		sum += int_from_term(car(args));
+		args = cdr(args);
+	}
+	return term_from_int(sum);
 }
 
 static term_t lambda(term_t (*native)(lambda_t*, term_t)) {
@@ -48,4 +53,5 @@ term_t init() {
 
 void term() {
 	symterm();
+	printf("\n\n");
 }

@@ -4,6 +4,7 @@
 #include <lib/init.h>
 #include <lib/read.h> 
 #include <lib/eval.h> 
+#include <lib/print.h> 
 
 
 int main() {
@@ -11,7 +12,7 @@ int main() {
 	FILE* f;
 
 	f = fmemopen(expr, strlen(expr), "r");
-	eval(read(f), init());
+	print(eval(read(f), init()));
 	term();
 	fclose(f);
 }

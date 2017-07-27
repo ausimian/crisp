@@ -46,7 +46,7 @@ term_t parse_symbol(FILE* fp) {
 	char   sym[256];
 
 	while ((c = getc(fp)) != EOF && c != ')' && !isspace(c)) {
-		sym[len++] = c;
+		sym[len++] = toupper(c);
 	}
 	sym[len] = 0;
 	ungetc(c, fp);
