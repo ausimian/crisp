@@ -1,6 +1,10 @@
 #include <stddef.h>
-#include "term.h"
-#include "env.h"
+#include "crisp.h"
+#include "gc.h"
+
+/*
+ * A semi-space copying collector. Highly inefficient and as dumb as a rock.
+ */
 
 #define ARENA_SZ 16384
 
@@ -13,10 +17,14 @@ static size_t  cidx = 0;
 static term_t *next = arena2;
 static size_t  nidx = 0;
 
-static inline bool in_curr_arena(term_t *p) {
-	return p >= curr && p < &curr[ARENA_SZ];
+static inline bool in_arena(const term_t* arena, const void *p) {
+	return p >= (const void*)curr && p < (const void*)&arena[ARENA_SZ];
 }
 
+/*
+ * Deep copy reachable terms from the current arena to the next,
+ * skipping already copied terms.
+ */
 static term_t copy(term_t t) {
 	size_t idx = nidx;
 
@@ -24,8 +32,10 @@ static term_t copy(term_t t) {
 		case TT_CONS:	
 			{
 				cons_t *src = cons_from_term(t);
-				cons_t *dst = (cons_t*)&next[idx];
+				if (in_arena(next, src))
+					break;
 
+				cons_t *dst = (cons_t*)&next[idx];
 				nidx += sizeof(cons_t) / sizeof(term_t);
 
 				src->car = dst->car = copy(car(t));
@@ -38,8 +48,10 @@ static term_t copy(term_t t) {
 			if (t != TT_NIL)
 			{
 				lambda_t *src = lambda_from_term(t);
-				lambda_t *dst = (lambda_t*)&next[idx];
+				if (in_arena(next, src))
+					break;
 
+				lambda_t *dst = (lambda_t*)&next[idx];
 				nidx += sizeof(lambda_t) / sizeof(term_t);
 
 				src->invoke   = dst->invoke;

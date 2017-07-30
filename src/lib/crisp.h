@@ -2,9 +2,9 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 /*--
-	term.h
 
 	The definition of the unitype term_t. Holds (or points to) all supported
 	types.
@@ -13,7 +13,7 @@
 	heap types. The bottom 2 bits of the value are used to tag the type. These
 	tag bits must be removed before the value can be used.
 
-	00 - a pointer to a heap type, or NIL
+	00 - a pointer to a heap type (currently only lambdas), or NIL
 	01 - a native integer, using the remaining bits in the word.
 	10 - a symbol (pointer to the symbol table)
 	11 - a cons pair pointer. Technically also a heap type, but encoded directly for performance.
@@ -121,3 +121,50 @@ lambda_t* lambda_from_term(term_t t) { return (lambda_t*)t; }
 static inline
 term_t term_from_lambda(lambda_t* l) { return (term_t)l; }
 
+/*
+ * True if and only if (a) the terms are equal or (b) point to the same memory.
+ */
+static inline 
+bool eq(term_t t1, term_t t2) {
+	return t1 == t2;
+}
+
+/*
+ * Environments
+ */
+extern term_t g_env;
+
+void   define(term_t name, term_t value);
+term_t lookup(term_t sym, term_t env);
+term_t extend(term_t env, term_t name, term_t value);
+term_t extendl(term_t env, term_t names, term_t values);
+
+/*
+ * Reading
+ */
+term_t read(FILE*);
+
+/*
+ * Evaluation
+ */
+term_t eval(term_t exp, term_t env);
+
+/*
+ * Printing
+ */
+void print(term_t t);
+
+/*
+ * Special forms
+ */
+extern term_t g_define;
+extern term_t g_lambda;
+extern term_t g_quote;
+extern term_t g_eval;
+extern term_t g_iff;
+
+/*
+ * Initialisation and tear-down.
+ */
+term_t init();
+void   term();

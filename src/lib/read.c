@@ -1,6 +1,5 @@
 #include <ctype.h>
-#include <stdio.h>
-#include "read.h"
+#include "crisp.h"
 
 static
 term_t reverse(term_t t) {

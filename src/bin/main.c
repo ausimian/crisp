@@ -1,10 +1,5 @@
-#include <inttypes.h>
-#include <stdio.h>
 #include <string.h>
-#include <lib/init.h>
-#include <lib/read.h> 
-#include <lib/eval.h> 
-#include <lib/print.h> 
+#include <lib/crisp.h>
 
 
 int main() {

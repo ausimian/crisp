@@ -1,5 +1,4 @@
-#include <stdio.h>
-#include "print.h"
+#include "crisp.h"
 
 void print(term_t t) {
 	if (nil_p(t)) {

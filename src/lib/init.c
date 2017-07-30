@@ -1,6 +1,5 @@
 #include <stdio.h>
-#include "init.h"
-#include "env.h"
+#include "crisp.h"
 #include "gc.h"
 #include "symtab.h"
 

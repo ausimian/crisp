@@ -1,14 +1,9 @@
 ARFLAGS = cr
 
 noinst_LIBRARIES = src/lib/libcrisp.a
-noinst_HEADERS   = src/lib/term.h     \
-				   src/lib/read.h     \
-				   src/lib/env.h      \
-				   src/lib/gc.h       \
+noinst_HEADERS   = src/lib/crisp.h    \
 				   src/lib/symtab.h   \
-				   src/lib/eval.h     \
-				   src/lib/init.h     \
-				   src/lib/print.h
+				   src/lib/gc.h
 
 bin_PROGRAMS = src/bin/crisp
 
