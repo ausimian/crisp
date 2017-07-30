@@ -1,3 +1,4 @@
+#include <inttypes.h>
 #include "crisp.h"
 
 void print(term_t t) {
@@ -18,7 +19,7 @@ void print(term_t t) {
 			putchar(')');
 			break;
 		case TT_INT:
-			printf("%d", int_from_term(t));
+			printf("%"PRIdPTR, int_from_term(t));
 			break;
 		case TT_SYM:
 			printf("%s", symbol_from_term(t));
