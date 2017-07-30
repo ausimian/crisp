@@ -18,7 +18,7 @@ term_t evlis(term_t exp, term_t env) {
  */
 static
 term_t invoke_lambda(lambda_t *l, term_t args) {
-    return eval(l->body, extendl(l->env, l->bindings, args));
+	return eval(l->body, extendl(l->env, l->bindings, args));
 }
 
 /*
@@ -27,7 +27,7 @@ term_t invoke_lambda(lambda_t *l, term_t args) {
  */
 static
 term_t invoke(term_t func, term_t args) {
-    lambda_t* l = lambda_from_term(func);
+	lambda_t* l = lambda_from_term(func);
 	return l->invoke(l, args);
 }
 
@@ -55,34 +55,34 @@ term_t lambda(term_t env, term_t bindings, term_t body) {
  * 3. Lists are either special forms (such as lambda or if) or application.
  */
 term_t eval(term_t exp, term_t env) {
-  if (!cons_p(exp)) {
-    if (sym_p(exp)) {
-      return lookup(exp, env);
-    } else {
-      return exp;
-    }
-  } else {
-    term_t first = car(exp);
-    term_t rest  = cdr(exp);
-    if (eq(first, g_define)) {
-      g_env = extend(g_env, car(rest), eval(cdar(rest), env));
-      return car(rest);
-    } else if (eq(first, g_lambda)) {
-      return lambda(env, car(rest), cdar(rest));
-    } else if (eq(first, g_quote)) {
-      return car(rest);
-    } else if (eq(first, g_eval)) {
-      return eval(car(evlis(rest, env)), env);
-    } else if (eq(first, g_iff)) {
-      if (!nil_p(eval(car(rest), env))) {
-        return eval(cdar(rest), env);
-      } else {
-        return eval(cddar(rest), env);
-      }
-    } else {
-      return invoke(eval(first, env), evlis(rest, env));
-    }
-  }
+	if (!cons_p(exp)) {
+		if (sym_p(exp)) {
+			return lookup(exp, env);
+		} else {
+			return exp;
+		}
+	} else {
+		term_t first = car(exp);
+		term_t rest  = cdr(exp);
+		if (eq(first, g_define)) {
+			g_env = extend(g_env, car(rest), eval(cdar(rest), env));
+			return car(rest);
+		} else if (eq(first, g_lambda)) {
+			return lambda(env, car(rest), cdar(rest));
+		} else if (eq(first, g_quote)) {
+			return car(rest);
+		} else if (eq(first, g_eval)) {
+			return eval(car(evlis(rest, env)), env);
+		} else if (eq(first, g_iff)) {
+			if (!nil_p(eval(car(rest), env))) {
+				return eval(cdar(rest), env);
+			} else {
+				return eval(cddar(rest), env);
+			}
+		} else {
+			return invoke(eval(first, env), evlis(rest, env));
+		}
+	}
 }
 
 
