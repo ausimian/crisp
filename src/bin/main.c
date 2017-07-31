@@ -10,6 +10,6 @@ void repl() {
 
 int main() {
 	init();
-        repl();
-        term();
+	repl();
+	term();
 }
