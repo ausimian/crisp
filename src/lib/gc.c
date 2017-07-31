@@ -32,34 +32,34 @@ static term_t copy(term_t t) {
 		case TT_CONS:	
 			{
 				cons_t *src = cons_from_term(t);
-				if (in_arena(next, src))
-					break;
+				if (in_arena(curr, src))
+				{
+					cons_t *dst = (cons_t*)&next[idx];
+					nidx += sizeof(cons_t) / sizeof(term_t);
 
-				cons_t *dst = (cons_t*)&next[idx];
-				nidx += sizeof(cons_t) / sizeof(term_t);
+					src->car = dst->car = copy(car(t));
+					src->cdr = dst->cdr = copy(cdr(t));
 
-				src->car = dst->car = copy(car(t));
-				src->cdr = dst->cdr = copy(cdr(t));
-
-				return term_from_cons(dst);
+					return term_from_cons(dst);
+				}
 			}
 			break;
 		case TT_HEAP:
 			if (t != TT_NIL)
 			{
 				lambda_t *src = lambda_from_term(t);
-				if (in_arena(next, src))
-					break;
+				if (in_arena(curr, src))
+				{
+					lambda_t *dst = (lambda_t*)&next[idx];
+					nidx += sizeof(lambda_t) / sizeof(term_t);
 
-				lambda_t *dst = (lambda_t*)&next[idx];
-				nidx += sizeof(lambda_t) / sizeof(term_t);
+					dst->invoke   = src->invoke;
+					src->env      = dst->env      = copy(src->env);
+					src->bindings = dst->bindings = copy(src->bindings);
+					src->body     = dst->body     = copy(src->body);
 
-				src->invoke   = dst->invoke;
-				src->env      = dst->env      = copy(src->env);
-				src->bindings = dst->bindings = copy(src->bindings);
-				src->body     = dst->body     = copy(src->body);
-
-				return term_from_lambda(dst);
+					return term_from_lambda(dst);
+				}
 			}
 			break;
 		default:
