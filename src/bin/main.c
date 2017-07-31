@@ -1,13 +1,15 @@
 #include <string.h>
 #include <lib/crisp.h>
 
+void repl() {
+        for (;;) {
+                print(eval(read(stdin), g_env));
+                putc('\n', stdout);
+        }
+}
 
 int main() {
-	static char expr[] = "(+ 1 2)";
-	FILE* f;
-
-	f = fmemopen(expr, strlen(expr), "r");
-	print(eval(read(f), init()));
-	term();
-	fclose(f);
+	init();
+        repl();
+        term();
 }
