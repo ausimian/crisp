@@ -38,11 +38,11 @@ term_t init() {
 	syminit();
 
 	// Install keywords
-	g_define = mkbuiltin("define");
-	g_lambda = mkbuiltin("lambda");
-	g_quote  = mkbuiltin("quote");
-	g_eval   = mkbuiltin("eval");
-	g_iff    = mkbuiltin("if");
+	g_define = mkbuiltin("DEFINE");
+	g_lambda = mkbuiltin("LAMBDA");
+	g_quote  = mkbuiltin("QUOTE");
+	g_eval   = mkbuiltin("EVAL");
+	g_iff    = mkbuiltin("IF");
 
 	// Install native 
 	define(mkbuiltin("+"), lambda(add));
