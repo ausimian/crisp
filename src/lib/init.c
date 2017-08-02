@@ -8,6 +8,7 @@ term_t g_lambda;
 term_t g_quote;
 term_t g_eval;
 term_t g_iff;
+term_t g_progn;
 
 static inline term_t mkbuiltin(const char* sym) {
 	return term_from_symbol(mksym(sym));
@@ -43,6 +44,7 @@ term_t init() {
 	g_quote  = mkbuiltin("QUOTE");
 	g_eval   = mkbuiltin("EVAL");
 	g_iff    = mkbuiltin("IF");
+	g_progn  = mkbuiltin("PROGN");
 
 	// Install native 
 	define(mkbuiltin("+"), lambda(add));

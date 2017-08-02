@@ -71,6 +71,13 @@ term_t eval(term_t exp, term_t env) {
 			return lambda(env, car(rest), cdar(rest));
 		} else if (eq(first, g_quote)) {
 			return car(rest);
+		} else if (eq(first, g_progn)) {
+			term_t r = TT_NIL;
+			while (!nil_p(car(rest))) {
+				r    = eval(car(rest), env);
+				rest = cdr(rest);
+			}
+			return r;
 		} else if (eq(first, g_eval)) {
 			return eval(car(evlis(rest, env)), env);
 		} else if (eq(first, g_iff)) {
