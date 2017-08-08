@@ -26,9 +26,31 @@ static inline bool in_arena(const term_t* arena, const void *p) {
  * skipping already copied terms.
  */
 static term_t copy(term_t t) {
-	size_t idx = nidx;
+	if (t == TT_NIL)
+		return t;
 
+	size_t idx = nidx;
 	switch (ttype(t)) {
+		case TT_HEAP:
+			switch (heap_type(t))
+			{
+				case HT_LAMBDA:
+					if (in_arena(curr, (void*)ptr(t)))
+					{
+						lambda_t *src = lambda_from_term(t);
+						lambda_t *dst = (lambda_t*)&next[idx];
+						nidx += sizeof(lambda_t) / sizeof(term_t);
+
+						dst->htype    = HT_LAMBDA;
+						dst->invoke   = src->invoke;
+						src->env      = dst->env      = copy(src->env);
+						src->bindings = dst->bindings = copy(src->bindings);
+						src->body     = dst->body     = copy(src->body);
+
+						return term_from_lambda(dst);
+					}
+			}
+			break;
 		case TT_CONS:	
 			{
 				cons_t *src = cons_from_term(t);
@@ -42,25 +64,6 @@ static term_t copy(term_t t) {
 
 					return term_from_cons(dst);
 				}
-			}
-			break;
-		case TT_HEAP:
-			if (t == TT_NIL)
-				break;
-				
-			lambda_t *src = lambda_from_term(t);
-			if (in_arena(curr, src))
-			{
-				lambda_t *dst = (lambda_t*)&next[idx];
-				nidx += sizeof(lambda_t) / sizeof(term_t);
-
-				dst->htype    = HT_LAMBDA;
-				dst->invoke   = src->invoke;
-				src->env      = dst->env      = copy(src->env);
-				src->bindings = dst->bindings = copy(src->bindings);
-				src->body     = dst->body     = copy(src->body);
-
-				return term_from_lambda(dst);
 			}
 			break;
 		default:
