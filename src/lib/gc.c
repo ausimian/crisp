@@ -45,21 +45,22 @@ static term_t copy(term_t t) {
 			}
 			break;
 		case TT_HEAP:
-			if (t != TT_NIL)
+			if (t == TT_NIL)
+				break;
+				
+			lambda_t *src = lambda_from_term(t);
+			if (in_arena(curr, src))
 			{
-				lambda_t *src = lambda_from_term(t);
-				if (in_arena(curr, src))
-				{
-					lambda_t *dst = (lambda_t*)&next[idx];
-					nidx += sizeof(lambda_t) / sizeof(term_t);
+				lambda_t *dst = (lambda_t*)&next[idx];
+				nidx += sizeof(lambda_t) / sizeof(term_t);
 
-					dst->invoke   = src->invoke;
-					src->env      = dst->env      = copy(src->env);
-					src->bindings = dst->bindings = copy(src->bindings);
-					src->body     = dst->body     = copy(src->body);
+				dst->htype    = HT_LAMBDA;
+				dst->invoke   = src->invoke;
+				src->env      = dst->env      = copy(src->env);
+				src->bindings = dst->bindings = copy(src->bindings);
+				src->body     = dst->body     = copy(src->body);
 
-					return term_from_lambda(dst);
-				}
+				return term_from_lambda(dst);
 			}
 			break;
 		default:

@@ -38,6 +38,7 @@ term_t invoke(term_t func, term_t args) {
 term_t lambda(term_t env, term_t bindings, term_t body) {
 
 	lambda_t* l = (lambda_t*)alloc(sizeof(lambda_t) / sizeof(term_t));	
+	l->htype    = HT_LAMBDA;
 	l->invoke   = invoke_lambda;
 	l->env      = env;
 	l->bindings = bindings;

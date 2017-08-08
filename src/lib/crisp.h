@@ -39,6 +39,9 @@ typedef uintptr_t term_t;
 static inline 
 uintptr_t ttype(term_t t) { return t & TT_MASK; }
 
+static inline
+uintptr_t ptr(term_t t) { return t & ~TT_MASK; }
+
 /*
  * NIL
  */
@@ -66,7 +69,7 @@ static inline
 bool sym_p(term_t t) { return ttype(t) == TT_SYM; }
 
 static inline
-const char* symbol_from_term(term_t t) { return ((const char*)(t & ~TT_MASK)); }
+const char* symbol_from_term(term_t t) { return (const char*)ptr(t); }
 
 term_t term_from_symbol(const char* sym);
 
@@ -82,7 +85,7 @@ typedef struct cons_t {
 } cons_t;
 
 static inline
-cons_t* cons_from_term(term_t t) { return (cons_t*)(t & ~TT_MASK); }
+cons_t* cons_from_term(term_t t) { return (cons_t*)ptr(t); }
 
 static inline 
 term_t car(term_t t) { return nil_p(t) ? t : cons_from_term(t)->car; }
@@ -103,12 +106,25 @@ term_t cons(term_t car, term_t cdr);
 
 
 /*
+ * Heap terms
+ */
+
+/*
+ * All heap terms begin with a word-sized header that indicates the 
+ * the type of the term.
+ */
+typedef enum heap_type_t {
+	HT_LAMBDA
+} heap_type_t;
+
+static inline
+heap_type_t heap_type(term_t t) { return *(heap_type_t*)ptr(t); }
+
+/*
  * Lambdas
  */
-static inline
-bool lambda_p(term_t t) { return ttype(t) == TT_HEAP && t; }
-
 typedef struct lambda_t {
+	heap_type_t htype;
 	term_t (*invoke)(struct lambda_t*, term_t);
 	term_t env;
 	term_t bindings;
